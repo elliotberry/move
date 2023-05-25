@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import chalk from 'chalk'
+
 
 const moveFile = (sourcePath, destDir) => {
     const fileName = path.basename(sourcePath)
@@ -13,7 +13,8 @@ const moveFile = (sourcePath, destDir) => {
             `${path.parse(fileName).name}(${count})${path.extname(fileName)}`
         )
     }
-    console.log(`${chalk.blue(sourcePath)} ==> ${chalk.green(destPath)}`)
+  
     fs.renameSync(sourcePath, destPath)
+    return {src: sourcePath, dest: destPath}
 }
 export default moveFile
