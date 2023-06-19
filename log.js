@@ -10,3 +10,4 @@ const log = {
     error: (msg) => opts.error && console.error(msg) && appendToTextFile(msg),
 }
 const appendToTextFile = (msg) => opts.file && appendFileSync(`${os.homeDir}elliot.move.log`, msg + '\n')
+export default log
