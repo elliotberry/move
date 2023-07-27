@@ -1,15 +1,33 @@
-import { existsSync, statSync } from 'fs'
 import path from 'path'
-import log from './log.js'
-import moveFile from './lib.js'
+import { existsSync, statSync } from 'fs'
+import { copyFile } from 'node:fs/promises'
 
-try {
-    let [, , sourcePath, destDir] = process.argv
+const validateArgs = (sourcePath, destDir) => {
+    return new Promise((resolve, reject) => {
+        if (!sourcePath || !destDir) {
+            console.error('Usage: move <sourcePath> <destDir>')
+            reject('Invalid arguments')
+        }
+        sourcePath = path.resolve(sourcePath)
+        destDir = path.resolve(destDir)
 
-    moveFile(sourcePath, destDir).then((res) => {
-        log.log(`${res.src} ==> ${res.dest}`)
+        let sourceStats = statSync(sourcePath)
+        let destStats = statSync(destDir)
+
+        // Check if sourcePath is a valid path
+        if (!existsSync(sourcePath) || !existsSync(destDir)) {
+            console.error(`Error: ${sourcePath} is not a valid path`)
+            reject('Invalid sourcePath')
+        }
+
+        // Check if destDir is a valid directory
+        if (sourceStats.isDirectory() || !destStats.isDirectory()) {
+            console.error(`Error: must copy a file to a folder`)
+            reject('Invalid destDir')
+        }
+
+        resolve({ sourcePath, destDir })
     })
-} catch (err) {
-    log.error(err)
-    process.exit(1)
 }
+
+export default validateArgs

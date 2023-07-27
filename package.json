@@ -1,14 +1,17 @@
 {
-    "name": "",
+    "name": "move",
     "description": "",
     "author": "dad",
-    "license": "no",
+    "license": "The Unlicense",
     "bin": {
         "move": "./index.js"
     },
     "main": "index.js",
     "type": "module",
-    "dependencies": {},
+    "dependencies": {
+        "prompt-sync": "^4.2.0",
+        "yargs": "^17.7.2"
+    },
     "devDependencies": {
         "eslint": "^8.29.0",
         "eslint-config-prettier": "^8.5.0",

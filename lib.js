@@ -1,35 +1,9 @@
 import path from 'path'
 import { existsSync, statSync } from 'fs'
 import { copyFile } from 'node:fs/promises'
-
-const validateArgs = (sourcePath, destDir) => {
-    return new Promise((resolve, reject) => {
-        if (!sourcePath || !destDir) {
-            console.error('Usage: move <sourcePath> <destDir>')
-            reject('Invalid arguments')
-        }
-        sourcePath = path.resolve(sourcePath)
-        destDir = path.resolve(destDir)
-
-        let sourceStats = statSync(sourcePath)
-        let destStats = statSync(destDir)
-
-        // Check if sourcePath is a valid path
-        if (!existsSync(sourcePath) || !existsSync(destDir)) {
-            console.error(`Error: ${sourcePath} is not a valid path`)
-            reject('Invalid sourcePath')
-        }
-
-        // Check if destDir is a valid directory
-        if (sourceStats.isDirectory() || !destStats.isDirectory()) {
-            console.error(`Error: must copy a file to a folder`)
-            reject('Invalid destDir')
-        }
-
-        resolve({ sourcePath, destDir })
-    })
-}
-
+import validateArgs from './index.js'
+import PromptSync from 'prompt-sync'
+let promptSync = PromptSync()
 const destPathFactory = (name, ext, destDir, count = 0) => {
     return path.join(destDir, `${name}${count === 0 ? '' : `--${count}`}${ext}`)
 }
@@ -48,30 +22,40 @@ const recursiveMove = (fileName, destDir) => {
     })
 }
 
-const moveFile = async (sourcePath, destDir) => {
+const moveFile = async (sourcePath, destDir, dryrun, prompt) => {
     try {
         const fileName = path.basename(sourcePath)
         let destPath = await recursiveMove(fileName, destDir)
+        if (prompt) {
+            let answer = promptSync(`Move ${sourcePath} to ${destPath}? (y/n) `)
+            if (answer.toLowerCase() !== 'y') {
+                console.log('Aborting move')
+                process.exit(0)
+            }
+            
+        }
+        if (dryrun) {
+            console.log(`Dry run: ${sourcePath} ==> ${destPath}`)
+            return { src: sourcePath, dest: destPath }
+        }
 
         await copyFile(sourcePath, destPath)
 
         return { src: sourcePath, dest: destPath }
-    } catch(err) {
+    } catch (err) {
         console.error(`The file could not be copied: ${err}`)
     }
 }
 
-const main = async (sourcePath, destDir) => {
+const main = async (sourcePath, destDir, dryrun=false, prompt=false) => {
     try {
         await validateArgs(sourcePath, destDir)
         let src = path.resolve(sourcePath)
         let dest = path.resolve(destDir)
 
-    
+        let res = await moveFile(src, dest, dryrun, prompt)
 
-        let res = await moveFile(src, dest)
-      
-       return res
+        return res
     } catch (err) {
         console.error(err)
         process.exit(1)
