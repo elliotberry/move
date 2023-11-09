@@ -6,7 +6,6 @@ var argv = yargs(process.argv.slice(2))
     .scriptName('move')
     .usage('$0 <source> <destination> [--dryrun] [--prompt]')
     .option('dryrun', {
-        alias: 'd',
         describe: 'Perform a dry run (no actual move)',
         type: 'boolean',
         default: false,
