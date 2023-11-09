@@ -1,8 +1,26 @@
 {
-    "name": "move",
+    "name": "moove",
+    "version": "0.1.0",
     "description": "moves a file somewhere else.",
-    "author": "dad",
+    "author": "ɛʟʟɨօȶ b",
     "license": "The Unlicense",
+    "keywords": [
+        "cool",
+        "useful",
+        "stuff",
+        "renaming",
+        "detox",
+        "cli",
+        "hentai"
+    ],
+    "os": [
+        "linux",
+        "darwin"
+    ],
+    "scripts": {
+        "test": "node ./test.js"
+    },
+    "module": "./index.js",
     "bin": {
         "move": "./index.js"
     },
@@ -11,6 +29,7 @@
     "dependencies": {
         "async": "^3.2.5",
         "prompt-sync": "^4.2.0",
+        "release-it": "^16.2.1",
         "yargs": "^17.7.2"
     },
     "devDependencies": {
@@ -42,6 +61,21 @@
         "rules": {
             "no-unused-vars": "warn",
             "no-console": "off"
+        }
+    },
+    "publishConfig": {
+        "executableFiles": [
+            "./index.js"
+        ],
+        "access": "public",
+        "registry": "https://registry.npmjs.org"
+    },
+    "release-it": {
+        "git": {
+            "commitMessage": "chore: release v${version}"
+        },
+        "github": {
+            "release": true
         }
     }
 }
