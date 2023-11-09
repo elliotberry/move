@@ -1,5 +1,5 @@
 import path from 'path';
-import whilst from 'async/whilst';
+import {whilst} from 'async';
 import exists from './exists.js'
 
 const destPathFactory = (name, ext, destDir, count = 0) => {
@@ -11,7 +11,7 @@ const recursiveRename = async (fileName, destDir) => {
     let count = 0;
     let destPath = destPathFactory(name, ext, destDir, count);
 
-    await whilst(exists(destPath), async () => {
+    await whilst(async function() {return await exists(destPath)}, async () => {
         count++;
         destPath = destPathFactory(name, ext, destDir, count);
     });

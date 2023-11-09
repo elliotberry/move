@@ -11,7 +11,7 @@ export const validateArgs = async (sourcePath, destDir) => {
         destDir = path.resolve(destDir);
 
         let sourceStats = await stat(sourcePath);
-        let destStats = stat(destDir);
+        let destStats = await stat(destDir);
 
         // Check if sourcePath is a valid path
         if (!await exists(sourcePath) || !await exists(destDir)) {

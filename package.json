@@ -1,6 +1,6 @@
 {
     "name": "move",
-    "description": "",
+    "description": "moves a file somewhere else.",
     "author": "dad",
     "license": "The Unlicense",
     "bin": {

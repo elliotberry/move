@@ -30,10 +30,10 @@ const moveFile = async (
     sourcePath,
     destDir,
     dryrun,
-    overwrite,
+    overwriteBehavior,
     deleteSource
 ) => {
-    try {
+   
         const fileName = path.basename(sourcePath)
         let destPath = path.join(destDir, fileName)
 
@@ -41,7 +41,7 @@ const moveFile = async (
         let renamed = false
         
         if (isOverwrite) {
-            if (overwrite === 'prompt') {
+            if (overwriteBehavior === 'prompt') {
                 let answer = promptSync(
                     `Move ${sourcePath} to ${destPath}, overwriting existing? (y/n) `
                 )
@@ -52,7 +52,7 @@ const moveFile = async (
                     console.log('Aborting move')
                     process.exit(0)
                 }                
-            } else if (overwrite === 'auto') {
+            } else if (overwriteBehavior === 'auto') {
                 destPath = await recursiveRename(sourcePath, destDir)
                 renamed = true
             } else {
@@ -65,9 +65,7 @@ const moveFile = async (
         await actuallyCopyTheFile(sourcePath, destPath, dryrun, deleteSource, renamed)
 
         return { src: sourcePath, dest: destPath, renamed, deleted: deleteSource }
-    } catch (err) {
-        console.error(`The file could not be copied: ${err}`)
-    }
+   
 }
 
 const main = async (
