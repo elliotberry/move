@@ -22,7 +22,7 @@ var argv = yargs(process.argv.slice(2))
         alias: 'D',
         describe: 'delete source file after moving',
         type: 'boolean',
-        default: true,
+        default: true
     })
     .help().argv
 

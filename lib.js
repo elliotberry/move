@@ -1,12 +1,11 @@
 import path from 'path'
-
-import { copyFile, rm, access } from 'node:fs/promises'
+import { copyFile, rm } from 'node:fs/promises'
 import PromptSync from 'prompt-sync'
 import recursiveRename from './recursiveRename.js'
 import exists from './exists.js'
+import chalk from "chalk";
+
 let promptSync = PromptSync()
-
-
 
 const actuallyCopyTheFile = async (
     sourcePath,
@@ -17,15 +16,18 @@ const actuallyCopyTheFile = async (
 ) => {
    
     console.log(`${dryrun ? 'Dry run: ' : ''}${sourcePath} ==> ${destPath}${renamed ? '(renamed)' : ''}`)
+
     if (!dryrun) {
         await copyFile(sourcePath, destPath)
         if (deleteSource === true) {
             await rm(sourcePath)
-            console.log(`Deleted ${sourcePath}`)
+            console.log(chalk.yellow(`Deleted ${sourcePath}`))
         }
     }
     return { src: sourcePath, dest: destPath }
 }
+
+
 const moveFile = async (
     sourcePath,
     destDir,
@@ -45,19 +47,17 @@ const moveFile = async (
                 let answer = promptSync(
                     `Move ${sourcePath} to ${destPath}, overwriting existing? (y/n) `
                 )
-                if (answer.toLowerCase() === 'y') {
-                    console.log('Moving file')
-                }
-                else {
-                    console.log('Aborting move')
+                if (answer.toLowerCase() !== 'y') {
+                    console.log('User indicated: abort move.')
                     process.exit(0)
-                }                
+                }
+                           
             } else if (overwriteBehavior === 'auto') {
                 destPath = await recursiveRename(sourcePath, destDir)
                 renamed = true
             } else {
                 ///skip
-                console.log(`Skipping ${sourcePath}`)
+                console.log(`Skipping ${sourcePath} due to conflict.`)
                 process.exit(0)
             }
         }
@@ -78,12 +78,11 @@ const main = async (
     try {
         let src = path.resolve(sourcePath)
         let dest = path.resolve(destDir)
-
         let res = await moveFile(src, dest, dryrun, overwrite, deleteSource)
 
         return res
     } catch (err) {
-        console.error(err)
+        console.error(chalk.red(err))
         process.exit(1)
     }
 }
