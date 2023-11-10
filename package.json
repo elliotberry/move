@@ -18,7 +18,7 @@
         "darwin"
     ],
     "scripts": {
-        "test": "node ./test.js",
+        "test": "node ./lib/test.js",
         "build": "pkg . --targets node18-linux-x64,node18-macos-arm64,node18-macos-x64 --output ./bin/moove"
     },
     "module": "./index.js",
@@ -36,6 +36,7 @@
     "devDependencies": {
         "eslint": "^8.29.0",
         "eslint-config-prettier": "^8.5.0",
+        "pkg": "^5.8.1",
         "prettier": "^2.7.1",
         "release-it": "^16.2.1"
     },

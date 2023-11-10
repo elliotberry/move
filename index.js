@@ -17,11 +17,11 @@ var argv = yargs(process.argv.slice(2))
         type: 'string',
         default: 'auto', // auto, prompt, skip, overwrite
     })
-    .option('delete', {
-        alias: 'D',
-        describe: 'delete source file after moving',
+    .option('keep', {
+        alias: 'K',
+        describe: 'DON\'T delete source file after moving',
         type: 'boolean',
-        default: true
+        default: false
     })
     .help().argv
 
@@ -29,7 +29,8 @@ async function main() {
     const source = argv._[0]
     const destination = argv._[1]
     const { sourcePath, destDir } = await validateArgs(source, destination)
-    await theWork(sourcePath, destDir, argv.dryrun, argv.overwrite, argv.delete)
+    let del = argv.keep ? false : true
+    await theWork(sourcePath, destDir, argv.dryrun, argv.overwrite, del)
 }
 main()
 
