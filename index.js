@@ -1,7 +1,7 @@
 import theWork from './lib.js'
 import yargs from 'yargs/yargs'
-import { validateArgs } from './validateArgs.js'
-
+import { validateArgs } from './lib/validate-args.js'
+import appendToLog from './lib/append-to-log.js'
 var argv = yargs(process.argv.slice(2))
     .scriptName('move')
     .usage('$0 <source> <destination> [--dryrun] [--prompt]')
@@ -30,7 +30,8 @@ async function main() {
     const destination = argv._[1]
     const { sourcePath, destDir } = await validateArgs(source, destination)
     let del = argv.keep ? false : true
-    await theWork(sourcePath, destDir, argv.dryrun, argv.overwrite, del)
+    let output = await theWork(sourcePath, destDir, argv.dryrun, argv.overwrite, del)
+    await appendToLog(JSON.stringify(output))
 }
 main()
 
