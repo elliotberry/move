@@ -1,7 +1,9 @@
-import theWork from './lib.js'
+import theWork from './lib/lib.js'
 import yargs from 'yargs/yargs'
 import { validateArgs } from './lib/validate-args.js'
-import appendToLog from './lib/append-to-log.js'
+//import appendToLog from './lib/append-to-log.js'
+import chalk from 'chalk'
+
 var argv = yargs(process.argv.slice(2))
     .scriptName('move')
     .usage('$0 <source> <destination> [--dryrun] [--prompt]')
@@ -19,19 +21,32 @@ var argv = yargs(process.argv.slice(2))
     })
     .option('keep', {
         alias: 'K',
-        describe: 'DON\'T delete source file after moving',
+        describe: "DON'T delete source file after moving",
         type: 'boolean',
-        default: false
+        default: false,
     })
     .help().argv
 
 async function main() {
-    const source = argv._[0]
-    const destination = argv._[1]
-    const { sourcePath, destDir } = await validateArgs(source, destination)
-    let del = argv.keep ? false : true
-    let output = await theWork(sourcePath, destDir, argv.dryrun, argv.overwrite, del)
-    await appendToLog(JSON.stringify(output))
+    try {
+        const source = argv._[0]
+        const destination = argv._[1]
+        const { sourcePath, destDir } = await validateArgs(
+            source,
+            destination,
+            argv.overwrite
+        )
+        let del = argv.keep ? false : true
+        let output = await theWork(
+            sourcePath,
+            destDir,
+            argv.dryrun,
+            argv.overwrite,
+            del
+        )
+        //  await appendToLog(JSON.stringify(output))
+    } catch (err) {
+        console.error(chalk.red(err))
+    }
 }
 main()
-
